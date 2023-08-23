@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Dosis&family=REM:wght@400&display=swap');
+
+* {
+  font-family: 'REM', sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #e6e6e6;
+}
+
+.text-justify {
+  text-align: justify;
+}
