@@ -13,6 +13,10 @@ app.use(express.urlencoded({ extended: false }));
 app.get("/", (req, res) => {
   res.render("index");
 });
+// detail project
+app.get("/detail-project/:id", (req, res) => {
+  res.render("detail-project");
+});
 // testimonial page
 app.get("/testimonial", (req, res) => {
   res.render("testimonial");
