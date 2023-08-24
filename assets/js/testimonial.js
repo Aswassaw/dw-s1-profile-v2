@@ -108,7 +108,7 @@ async function filterTestimonial(ratingVal) {
         </div>`;
       });
     } else {
-      testimonialHTML += `<h1>Data Not Found!</h1>`;
+      testimonialHTML += `<h1 class="fs-3">Data Not Found!</h1>`;
     }
 
     document.getElementById("testimonial").innerHTML = testimonialHTML;
