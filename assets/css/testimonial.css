@@ -1,0 +1,103 @@
+/* Testimonial */
+.testimonial-list {
+  margin: 30px 20px;
+  background-color: white;
+  padding: 40px 30px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.testimonial-card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  box-sizing: border-box;
+  justify-content: center;
+}
+
+.testimonial-card {
+  flex-basis: calc(25% - 25px);
+  padding: 18px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.testimonial-card .testimonial-image {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.testimonial-card .testimonial-message {
+  font-style: italic;
+  color: rgb(61, 61, 61);
+}
+
+.testimonial-card .testimonial-author {
+  text-align: end;
+  font-weight: bold;
+}
+
+.testimonial-card .rating-value {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.testimonial-list .rating {
+  border: 2px solid black;
+  border-radius: 3px;
+  padding: 15px 30px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  max-width: 700px;
+}
+
+.testimonial-list .rating .rating-list {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  gap: 20px;
+}
+
+.testimonial-list .rating .rating-list span {
+  text-align: center;
+  background-color: #279EFF;
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  transition: .5s;
+  flex: calc(20% - 20px);
+  max-width: 80px;
+}
+
+.testimonial-list .rating .rating-list span:hover {
+  background-color: #1f6299;
+}
+
+.testimonial-list .rating .rating-list span.active {
+  background-color: #FE4E30;
+}
+
+.testimonial-list .rating .rating-list span.active:hover {
+  background-color: #b22a12;
+}
+
+@media only screen and (max-width: 650px) {
+  .testimonial-list .rating .rating-list span {
+    flex: calc(30% - 20px);
+  }
+}
+
+@media only screen and (max-width: 576px) {
+  .testimonial-list .rating .rating-list span {
+    flex: calc(50% - 20px);
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .testimonial-list .rating .rating-list span {
+    flex: calc(100% - 20px);
+  }
+}
