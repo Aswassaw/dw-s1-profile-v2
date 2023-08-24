@@ -13,21 +13,23 @@ app.use(express.urlencoded({ extended: false }));
 app.get("/", (req, res) => {
   res.render("index");
 });
-// detail project
-app.get("/detail-project/:id", (req, res) => {
-  res.render("detail-project");
+// add project page
+app.get("/add-project", (req, res) => res.render("add-project"));
+// add project controller
+app.post("/add-project", (req, res) => {
+  console.log(req.body);
+  res.redirect("/");
 });
+// detail project page
+app.get("/detail-project/:id", (req, res) => res.render("detail-project"));
 // testimonial page
-app.get("/testimonial", (req, res) => {
-  res.render("testimonial");
-});
+app.get("/testimonial", (req, res) => res.render("testimonial"));
 // contact page
-app.get("/contact-me", (req, res) => {
-  res.render("contact");
-});
+app.get("/contact-me", (req, res) => res.render("contact"));
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Url: http://localhost:${PORT}`);
 });
 
 // Export the Express API
