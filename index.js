@@ -22,16 +22,8 @@ projects = projects.map((project) => {
   };
 });
 
-// home page
 app.get("/", (req, res) => res.render("index", { projects }));
-// add project page
 app.get("/add-project", (req, res) => res.render("add-project"));
-// add project controller
-app.post("/add-project", (req, res) => {
-  console.log(req.body);
-  res.redirect("/");
-});
-// detail project page
 app.get("/detail-project/:id", (req, res) => {
   const selectedProject = projects.filter(
     (project) => project.id === req.params.id
@@ -41,10 +33,18 @@ app.get("/detail-project/:id", (req, res) => {
     project: selectedProject[0],
   });
 });
-// testimonial page
 app.get("/testimonial", (req, res) => res.render("testimonial"));
-// contact page
 app.get("/contact-me", (req, res) => res.render("contact"));
+
+app.post("/add-project", (req, res) => {
+  console.log(req.body);
+  res.redirect("/");
+});
+app.get("/delete-project/:id", (req, res) => {
+  projects = projects.filter((project) => project.id !== req.params.id);
+
+  res.redirect("/");
+});
 
 const PORT = 5000;
 app.listen(PORT, () => {

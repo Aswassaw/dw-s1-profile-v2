@@ -98,6 +98,7 @@
 
   <section class="container my-4 bg-white p-5 shadow rounded-2" style="max-width: 1450px">
     <h1 class="text-center mb-3">MY PROJECT</h1>
+    {{#if projects.length}}
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 justify-content-center">
       {{#each projects}}
       <div class="col">
@@ -129,14 +130,25 @@
           <div class="card-footer">
             <small class="d-block text-secondary mb-2 text-center">{{this.createdAt}}</small>
             <div class="d-flex justify-content-between">
-              <button class="btn btn-primary w-100 mx-1">Edit</button>
-              <button class="btn btn-danger w-100 mx-1">Delete</button>
+              <button class="btn btn-primary w-100 mx-1">
+                Edit
+              </button>
+              <button class="btn btn-danger w-100 mx-1">
+                <a class="text-decoration-none text-white" href="/delete-project/{{this.id}}">Delete</a>
+              </button>
             </div>
           </div>
         </div>
       </div>
       {{/each}}
     </div>
+    {{else}}
+    <div class="row">
+      <div class="col">
+        <h1 class="text-center fs-3 fw-bold">Tidak Ada Project Ditemukan!</h1>
+      </div>
+    </div>
+    {{/if}}
   </section>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
