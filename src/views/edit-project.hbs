@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Andry Pebrianto - Add Project</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/utilities.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg bg-body-tertiary p-3">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <img src="/img/logo.png" alt="Dumbways Logo" width="60px">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/add-project">Add Project</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/testimonial">Testimonial</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link bg-dark text-white rounded-2 p-3" href="/contact-me">Contact Me</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="container my-4 bg-white p-4 p-sm-5 shadow rounded-2" style="max-width: 600px;">
+    <h1 class="text-center mb-4">EDIT PROJECT</h1>
+    <form id="contactForm" method="post" action="/edit-project/{{project.id}}">
+      <div class="mb-3">
+        <label for="projectName" class="form-label">Project Name</label>
+        <input type="text" class="form-control" id="projectName" name="projectName" placeholder="Project Name"
+          value="{{project.projectName}}">
+      </div>
+      <div class="mb-3 d-flex flex-column flex-sm-row justify-content-between gap-2">
+        <div class="w-100 mb-2 mb-sm-0">
+          <label for="startDate" class="form-label">Start Date</label>
+          <input type="date" class="form-control" id="startDate" name="startDate" placeholder="Start Date"
+            value="{{project.startDate}}">
+        </div>
+        <div class="w-100">
+          <label for="endDate" class="form-label">End Date</label>
+          <input type="date" class="form-control" id="endDate" name="endDate" placeholder="End Date"
+            value="{{project.endDate}}">
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" rows="6" name="description"
+          placeholder="Project Description">{{project.description}}</textarea>
+      </div>
+      <div class="mb-3">
+        <label class="label mb-1" for="technologies">Technologies</label>
+        <div class="row">
+          <div class="col-12 col-sm-3 mb-1 mb-sm-0">
+            <div class="form-check d-flex align-items-center gap-2">
+              {{#if project.technologies.js}}
+              <input class="form-check-input checkbox-custom" type="checkbox" value="Javascript" id="javascript"
+                name="javascript" checked>
+              {{else}}
+              <input class="form-check-input checkbox-custom" type="checkbox" value="Javascript" id="javascript"
+                name="javascript">
+              {{/if}}
+              <label class="form-check-label mt-1" for="javascript">
+                Javascript
+              </label>
+            </div>
+          </div>
+          <div class="col-12 col-sm-3 mb-1 mb-sm-0">
+            <div class="form-check d-flex align-items-center gap-2">
+              {{#if project.technologies.go}}
+              <input class="form-check-input checkbox-custom" type="checkbox" value="Golang" id="golang" name="golang"
+                checked>
+              {{else}}
+              <input class="form-check-input checkbox-custom" type="checkbox" value="Golang" id="golang" name="golang">
+              {{/if}}
+              <label class="form-check-label mt-1" for="golang">
+                Golang
+              </label>
+            </div>
+          </div>
+          <div class="col-12 col-sm-3 mb-1 mb-sm-0">
+            <div class="form-check d-flex align-items-center gap-2">
+              {{#if project.technologies.php}}
+              <input class="form-check-input checkbox-custom" type="checkbox" value="PHP" id="php" name="php" checked>
+              {{else}}
+              <input class="form-check-input checkbox-custom" type="checkbox" value="PHP" id="php" name="php">
+              {{/if}}
+              <label class="form-check-label mt-1" for="php">
+                PHP
+              </label>
+            </div>
+          </div>
+          <div class="col-12 col-sm-3 mb-1 mb-sm-0">
+            <div class="form-check d-flex align-items-center gap-2">
+              {{#if project.technologies.java}}
+              <input class="form-check-input checkbox-custom" type="checkbox" value="Java" id="java" name="java"
+                checked>
+              {{else}}
+              <input class="form-check-input checkbox-custom" type="checkbox" value="Java" id="java" name="java">
+              {{/if}}
+              <label class="form-check-label mt-1" for="java">
+                Java
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="projectImage" class="form-label">Project Image</label>
+        <input type="file" class="form-control" id="projectImage" name="projectImage" placeholder="Project Image">
+      </div>
+      <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

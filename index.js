@@ -22,8 +22,9 @@ projects = projects.map((project) => {
   };
 });
 
-app.get("/", (req, res) => res.render("index", { projects }));
-app.get("/add-project", (req, res) => res.render("add-project"));
+app.get("/", (req, res) => {
+  res.render("index", { projects });
+});
 app.get("/detail-project/:id", (req, res) => {
   const selectedProject = projects.filter(
     (project) => project.id === req.params.id
@@ -33,17 +34,85 @@ app.get("/detail-project/:id", (req, res) => {
     project: selectedProject[0],
   });
 });
-app.get("/testimonial", (req, res) => res.render("testimonial"));
-app.get("/contact-me", (req, res) => res.render("contact"));
-
+app.get("/add-project", (req, res) => {
+  res.render("add-project");
+});
 app.post("/add-project", (req, res) => {
-  console.log(req.body);
+  const newProject = {
+    id: `${new Date().getTime()}`,
+    projectName: req.body.projectName,
+    startDate: moment(req.body.startDate).format("L"),
+    endDate: moment(req.body.endDate).format("L"),
+    distance: dateDuration(req.body.startDate, req.body.endDate),
+    description: req.body.description,
+    technologies: {
+      js: req.body.javascript !== undefined,
+      go: req.body.golang !== undefined,
+      php: req.body.php !== undefined,
+      java: req.body.java !== undefined,
+    },
+    imageUrl: "https://mardizu.co.id/assets/images/client/default.png",
+    createdAt: moment(new Date()).format("LLLL"),
+  };
+  projects.push(newProject);
+
+  res.redirect("/");
+});
+app.get("/edit-project/:id", (req, res) => {
+  const selectedProject = projects.filter(
+    (project) => project.id === req.params.id
+  );
+
+  if (selectedProject.length === 0) {
+    res.redirect("/");
+  }
+
+  res.render("edit-project", {
+    project: {
+      ...selectedProject[0],
+      startDate: moment(new Date(selectedProject[0].startDate)).format(
+        "YYYY-MM-DD"
+      ),
+      endDate: moment(new Date(selectedProject[0].endDate)).format(
+        "YYYY-MM-DD"
+      ),
+    },
+  });
+});
+app.post("/edit-project/:id", (req, res) => {
+  const newProject = {
+    id: req.params.id,
+    projectName: req.body.projectName,
+    startDate: moment(req.body.startDate).format("L"),
+    endDate: moment(req.body.endDate).format("L"),
+    distance: dateDuration(req.body.startDate, req.body.endDate),
+    description: req.body.description,
+    technologies: {
+      js: req.body.javascript !== undefined,
+      go: req.body.golang !== undefined,
+      php: req.body.php !== undefined,
+      java: req.body.java !== undefined,
+    },
+    imageUrl: "https://mardizu.co.id/assets/images/client/default.png",
+    createdAt: moment(new Date()).format("LLLL"),
+  };
+  // delete project
+  projects = projects.filter((project) => project.id !== req.params.id);
+  // add project
+  projects.push(newProject);
+
   res.redirect("/");
 });
 app.get("/delete-project/:id", (req, res) => {
   projects = projects.filter((project) => project.id !== req.params.id);
 
   res.redirect("/");
+});
+app.get("/testimonial", (req, res) => {
+  res.render("testimonial");
+});
+app.get("/contact-me", (req, res) => {
+  res.render("contact");
 });
 
 const PORT = 5000;

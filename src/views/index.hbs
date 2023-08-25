@@ -130,12 +130,14 @@
           <div class="card-footer">
             <small class="d-block text-secondary mb-2 text-center">{{this.createdAt}}</small>
             <div class="d-flex justify-content-between">
-              <button class="btn btn-primary w-100 mx-1">
+              <a class="btn btn-primary d-block w-100 mx-1 text-decoration-none text-white"
+                href="/edit-project/{{this.id}}">
                 Edit
-              </button>
-              <button class="btn btn-danger w-100 mx-1">
-                <a class="text-decoration-none text-white" href="/delete-project/{{this.id}}">Delete</a>
-              </button>
+              </a>
+              <a class="btn btn-danger d-block w-100 mx-1 text-decoration-none text-white"
+                href="/delete-project/{{this.id}}">
+                Delete
+              </a>
             </div>
           </div>
         </div>
