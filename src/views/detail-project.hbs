@@ -46,70 +46,51 @@
   </nav>
 
   <div class="project-detail">
-    <h1 class="fs-2 fw-bold" style="text-align: center; margin-top: 0; margin-bottom: 40px;">Dumbways Web App</h1>
+    {{#if project.id}}
+    <h1 class="fs-2 fw-bold mb-1" style="text-align: center; margin-top: 0; margin-bottom: 40px;">
+      {{project.projectName}}
+    </h1>
+    <small class="d-block text-secondary mb-4 text-center">{{project.createdAt}}</small>
     <div class="top">
       <div class="project-image">
-        <img src="/img/darkmagician.png" style="width: 100%; max-height: 450px; object-fit: cover;" alt="">
+        <img src="{{project.imageUrl}}" style="width: 100%; max-height: 450px; object-fit: cover;" alt="">
       </div>
       <div class="project-attr">
         <h3 class="fs-4" style="margin: 0;">Duration</h3>
-        <p class="mb-1" style="margin-top: 10px;"><i style="margin-right: 5px;" class="fa-regular fa-calendar-days"></i> 12 Jan 2021
-          - 11 Feb 2021</p>
-        <p><i style="margin-right: 5px;" class="fa-regular fa-clock"></i> 1 Month</p>
+        <p class="mb-1" style="margin-top: 10px;"><i style="margin-right: 5px;" class="fa-regular fa-calendar-days"></i>
+          {{project.startDate}} - {{project.endDate}}
+        </p>
+        <p><i style="margin-right: 5px;" class="fa-regular fa-clock"></i> {{project.distance}}</p>
 
         <h3 class="fs-4" style="margin: 0;">Technologies</h3>
         <div style="margin-top: 10px;" class="project-technologies">
+          {{#if project.technologies.js}}
           <div><i class="fa-brands fa-square-js"></i> Javascript</div>
+          {{/if}}
+          {{#if project.technologies.go}}
           <div><i class="fa-brands fa-golang"></i> Golang</div>
+          {{/if}}
+          {{#if project.technologies.php}}
           <div><i class="fa-brands fa-php"></i> PHP</div>
+          {{/if}}
+          {{#if project.technologies.java}}
           <div><i class="fa-brands fa-java"></i> Java</div>
+          {{/if}}
         </div>
       </div>
     </div>
     <div class="mt-4">
-      <p style="text-align: justify;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur non ducimus
-        doloremque consequatur
-        repellendus eveniet quia vel expedita voluptate sequi.</p>
-      <p style="text-align: justify;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Corrupti molestias
-        aliquam, repellat minima delectus
-        maxime! Consequuntur modi reiciendis rerum. Praesentium explicabo iure, ducimus dicta assumenda corporis.
-        Voluptas aspernatur quis quae accusantium, odio cumque corrupti quam obcaecati tenetur sed deleniti adipisci, ut
-        nam dicta. Perspiciatis quam provident doloribus neque voluptatibus non.</p>
-      <p style="text-align: justify;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi aliquid iste in
-        unde sunt aut.</p>
-      <p style="text-align: justify;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus similique eum eius
-        animi mollitia iure dolore,
-        et accusantium. Quasi ab cum eveniet numquam, ipsam provident natus distinctio labore expedita aliquid quia
-        voluptatibus voluptatem rerum eaque vitae eligendi architecto odit praesentium assumenda aspernatur at mollitia
-        illo temporibus? Sapiente, et. Odio sed dignissimos voluptatem repudiandae, laboriosam nihil quibusdam repellat
-        quam quaerat perspiciatis ducimus iure est cum? Molestiae quod error nemo repellat, soluta, quos porro voluptate
-        minus facilis modi molestias laboriosam ea vero dolore suscipit eum dolorum, possimus impedit facere velit id
-        placeat. Delectus, nisi? Explicabo fugit unde voluptatum delectus error ea eaque?</p>
-      <p style="text-align: justify;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum saepe corporis
-        maiores provident, tempore quis
-        necessitatibus ab cupiditate placeat sunt voluptatem asperiores ducimus veniam doloribus nobis qui. Et, ipsam
-        animi.</p>
-      <p style="text-align: justify;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt nesciunt soluta amet
-        reprehenderit, fuga mollitia
-        corrupti minus cum nihil ut numquam autem omnis, nemo eveniet provident ab repellendus, perspiciatis saepe
-        molestias accusamus ad reiciendis. Exercitationem delectus porro adipisci, modi magni recusandae rerum fugit
-        velit. Molestias aperiam repudiandae magni nihil. Quia ut, molestias molestiae voluptatem sapiente accusantium
-        assumenda doloremque facere odio at, aut nemo praesentium deserunt perferendis dolorum tempora atque quod
-        reprehenderit? Iste reprehenderit sint a, accusamus pariatur non similique itaque?</p>
-      <p style="text-align: justify;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Numquam rerum praesentium
-        iusto quod, nisi ex,
-        nesciunt quo dolores eius enim repellat animi soluta vitae architecto laudantium velit aliquam ullam similique
-        minima impedit? Voluptate adipisci deleniti dolores, harum distinctio magni nam aperiam excepturi sequi hic
-        laborum. Debitis animi officia illum deserunt ut quia, ipsa provident, ducimus distinctio voluptatem natus sed
-        perspiciatis sit quae doloremque modi dignissimos! Soluta reiciendis ipsam cumque ut ipsa fuga distinctio
-        doloremque, inventore deserunt? Sapiente corrupti vitae laboriosam?</p>
-      <p style="text-align: justify;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae assumenda odio
-        molestias excepturi corrupti
-        quam.</p>
-      <p style="text-align: justify;">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptas aliquid
-        nostrum, laborum quibusdam
-        voluptates exercitationem.</p>
+      <p style="text-align: justify;">{{project.description}}</p>
     </div>
+    {{else}}
+    <h1 class="fs-2 fw-bold mb-1" style="text-align: center;">Project Tersebut Tidak Ditemukan!
+    </h1>
+    <div class="d-flex justify-content-center">
+      <button class="btn btn-primary mt-3">
+        <a class="text-decoration-none text-white" href="/"> <i class="fa-solid fa-backward"></i> Kembali</a>
+      </button>
+    </div>
+    {{/if}}
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"

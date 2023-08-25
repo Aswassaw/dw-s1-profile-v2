@@ -98,26 +98,36 @@
 
   <section class="container my-4 bg-white p-5 shadow rounded-2" style="max-width: 1450px">
     <h1 class="text-center mb-3">MY PROJECT</h1>
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4 justify-content-center">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 justify-content-center">
+      {{#each projects}}
       <div class="col">
         <div class="card h-100 shadow">
-          <img src="/img/hiita.jpg" class="card-img-top img-thumbnail" alt="Hiita"
+          <img src="{{this.imageUrl}}" class="card-img-top img-thumbnail" alt="Hiita"
             style="height: 280px; object-fit: cover;">
           <div class="card-body">
-            <h5 class="card-title fw-bold"><a class="text-decoration-none link-dark" href="/detail-project/1">Hiita</a>
+            <h5 class="card-title fw-bold"><a class="text-decoration-none link-dark"
+                href="/detail-project/{{this.id}}">{{this.projectName}}</a>
             </h5>
-            <small class="d-block mb-2 text-secondary">Durasi: 11-11-2011 - 12-12-2012 (13 Bulan)</small>
-            <p class="card-text">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Blanditiis corporis totam
-              tenetur ad, aliquid aperiam.</p>
+            <small class="d-block mb-2 text-secondary">Duration: {{this.startDate}} - {{this.endDate}}
+              ({{this.distance}})</small>
+            <p class="card-text">{{this.description}}</p>
             <div class="d-flex">
+              {{#if this.technologies.js}}
               <i class="fa-brands fa-square-js me-2 fs-4"></i>
+              {{/if}}
+              {{#if this.technologies.go}}
               <i class="fa-brands fa-golang me-2 fs-4"></i>
+              {{/if}}
+              {{#if this.technologies.php}}
               <i class="fa-brands fa-php me-2 fs-4"></i>
+              {{/if}}
+              {{#if this.technologies.java}}
               <i class="fa-brands fa-java me-2 fs-4"></i>
+              {{/if}}
             </div>
           </div>
           <div class="card-footer">
-            <small class="d-block text-secondary mb-2 text-center">12 Aug 2023 00:13 WIB</small>
+            <small class="d-block text-secondary mb-2 text-center">{{this.createdAt}}</small>
             <div class="d-flex justify-content-between">
               <button class="btn btn-primary w-100 mx-1">Edit</button>
               <button class="btn btn-danger w-100 mx-1">Delete</button>
@@ -125,111 +135,7 @@
           </div>
         </div>
       </div>
-      <div class="col">
-        <div class="card h-100 shadow">
-          <img src="/img/wynn.jpg" class="card-img-top img-thumbnail" alt="Wynn"
-            style="height: 280px; object-fit: cover;">
-          <div class="card-body">
-            <h5 class="card-title fw-bold"><a class="text-decoration-none link-dark" href="/detail-project/2">Wynn</a>
-            </h5>
-            <small class="d-block mb-2 text-secondary">Durasi: 11-11-2011 - 12-12-2012 (13 Bulan)</small>
-            <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam beatae totam optio
-              tenetur unde cumque.</p>
-            <div class="d-flex">
-              <i class="fa-brands fa-square-js me-2 fs-4"></i>
-              <i class="fa-brands fa-golang me-2 fs-4"></i>
-              <i class="fa-brands fa-php me-2 fs-4"></i>
-              <i class="fa-brands fa-java me-2 fs-4"></i>
-            </div>
-          </div>
-          <div class="card-footer">
-            <small class="d-block text-secondary mb-2 text-center">12 Aug 2023 00:13 WIB</small>
-            <div class="d-flex justify-content-between">
-              <button class="btn btn-primary w-100 mx-1">Edit</button>
-              <button class="btn btn-danger w-100 mx-1">Delete</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card h-100 shadow">
-          <img src="/img/eria.jpg" class="card-img-top img-thumbnail" alt="Eria"
-            style="height: 280px; object-fit: cover;">
-          <div class="card-body">
-            <h5 class="card-title fw-bold"><a class="text-decoration-none link-dark" href="/detail-project/3">Eria</a>
-            </h5>
-            <small class="d-block mb-2 text-secondary">Durasi: 11-11-2011 - 12-12-2012 (13 Bulan)</small>
-            <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi rem obcaecati quas error
-              a provident.</p>
-            <div class="d-flex">
-              <i class="fa-brands fa-square-js me-2 fs-4"></i>
-              <i class="fa-brands fa-golang me-2 fs-4"></i>
-              <i class="fa-brands fa-php me-2 fs-4"></i>
-              <i class="fa-brands fa-java me-2 fs-4"></i>
-            </div>
-          </div>
-          <div class="card-footer">
-            <small class="d-block text-secondary mb-2 text-center">12 Aug 2023 00:13 WIB</small>
-            <div class="d-flex justify-content-between">
-              <button class="btn btn-primary w-100 mx-1">Edit</button>
-              <button class="btn btn-danger w-100 mx-1">Delete</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card h-100 shadow">
-          <img src="/img/aussa.jpg" class="card-img-top img-thumbnail" alt="Aussa"
-            style="height: 280px; object-fit: cover;">
-          <div class="card-body">
-            <h5 class="card-title fw-bold"><a class="text-decoration-none link-dark" href="/detail-project/4">Aussa</a>
-            </h5>
-            <small class="d-block mb-2 text-secondary">Durasi: 11-11-2011 - 12-12-2012 (13 Bulan)</small>
-            <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto sed
-              nesciunt loles signo sunt magnam.</p>
-            <div class="d-flex">
-              <i class="fa-brands fa-square-js me-2 fs-4"></i>
-              <i class="fa-brands fa-golang me-2 fs-4"></i>
-              <i class="fa-brands fa-php me-2 fs-4"></i>
-              <i class="fa-brands fa-java me-2 fs-4"></i>
-            </div>
-          </div>
-          <div class="card-footer">
-            <small class="d-block text-secondary mb-2 text-center">12 Aug 2023 00:13 WIB</small>
-            <div class="d-flex justify-content-between">
-              <button class="btn btn-primary w-100 mx-1">Edit</button>
-              <button class="btn btn-danger w-100 mx-1">Delete</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card h-100 shadow">
-          <img src="/img/teamwork.jpg" class="card-img-top img-thumbnail" alt="Team Work"
-            style="height: 280px; object-fit: cover;">
-          <div class="card-body">
-            <h5 class="card-title fw-bold"><a class="text-decoration-none link-dark" href="/detail-project/5">Team
-                Work</a>
-            </h5>
-            <small class="d-block mb-2 text-secondary">Durasi: 11-11-2011 - 12-12-2012 (13 Bulan)</small>
-            <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore fugit ducimus quae
-              similique itaque commodi!</p>
-            <div class="d-flex">
-              <i class="fa-brands fa-square-js me-2 fs-4"></i>
-              <i class="fa-brands fa-golang me-2 fs-4"></i>
-              <i class="fa-brands fa-php me-2 fs-4"></i>
-              <i class="fa-brands fa-java me-2 fs-4"></i>
-            </div>
-          </div>
-          <div class="card-footer">
-            <small class="d-block text-secondary mb-2 text-center">12 Aug 2023 00:13 WIB</small>
-            <div class="d-flex justify-content-between">
-              <button class="btn btn-primary w-100 mx-1">Edit</button>
-              <button class="btn btn-danger w-100 mx-1">Delete</button>
-            </div>
-          </div>
-        </div>
-      </div>
+      {{/each}}
     </div>
   </section>
 
