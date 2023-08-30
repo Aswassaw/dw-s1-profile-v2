@@ -3,6 +3,11 @@ const moment = require("moment/moment");
 const path = require("path");
 const dateDuration = require("./src/utils/dateDuration");
 
+// sequelize init
+const config = require("./config/config.json");
+const { Sequelize, QueryTypes } = require("sequelize");
+const sequelize = new Sequelize(config.development);
+
 const app = express();
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "src/views"));
@@ -22,17 +27,62 @@ projects = projects.map((project) => {
   };
 });
 
-app.get("/", (req, res) => {
-  res.render("index", { projects });
-});
-app.get("/detail-project/:id", (req, res) => {
-  const selectedProject = projects.filter(
-    (project) => project.id === req.params.id
-  );
+app.get("/", async (req, res) => {
+  try {
+    const query = `SELECT * FROM projects;`;
+    let projectsData = await sequelize.query(query, {
+      type: QueryTypes.SELECT,
+    });
 
-  res.render("detail-project", {
-    project: selectedProject[0],
-  });
+    projectsData = projectsData.map((project) => {
+      return {
+        ...project,
+        startDate: moment(project.startDate).format("L"),
+        endDate: moment(project.endDate).format("L"),
+        createdAt: moment(project.createdAt).format("LLLL"),
+        updatedAt: moment(project.updatedAt).format("LLLL"),
+        distance: dateDuration(project.startDate, project.endDate),
+        neverUpdated:
+          moment(project.createdAt).format("L") ===
+          moment(project.updatedAt).format("L"),
+      };
+    });
+
+    res.render("index", { projects: projectsData });
+  } catch (error) {
+    console.log(error);
+    res.send("500 Internal Server Error");
+  }
+});
+app.get("/detail-project/:id", async (req, res) => {
+  try {
+    const query = `SELECT * FROM projects WHERE id=:id;`;
+    let projectDetail = await sequelize.query(query, {
+      replacements: {
+        id: req.params.id,
+      },
+      type: QueryTypes.SELECT,
+    });
+
+    projectDetail = projectDetail.map((project) => ({
+      ...project,
+      startDate: moment(project.startDate).format("L"),
+      endDate: moment(project.endDate).format("L"),
+      createdAt: moment(project.createdAt).format("LLLL"),
+      updatedAt: moment(project.updatedAt).format("LLLL"),
+      distance: dateDuration(project.startDate, project.endDate),
+      neverUpdated:
+        moment(project.createdAt).format("L") ===
+        moment(project.updatedAt).format("L"),
+    }));
+
+    res.render("detail-project", {
+      project: projectDetail[0],
+    });
+  } catch (error) {
+    console.log(error);
+    res.send("500 Internal Server Error");
+  }
 });
 app.get("/add-project", (req, res) => {
   res.render("add-project");

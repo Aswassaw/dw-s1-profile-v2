@@ -48,12 +48,18 @@
   <div class="project-detail">
     {{#if project.id}}
     <h1 class="fs-2 fw-bold mb-1" style="text-align: center; margin-top: 0; margin-bottom: 40px;">
-      {{project.projectName}}
+      {{project.name}}
     </h1>
-    <small class="d-block text-secondary mb-4 text-center">{{project.createdAt}}</small>
+    <small class="d-block text-secondary mb-4 text-center">
+      {{#if project.neverUpdated}}
+      Created at {{project.createdAt}}
+      {{else}}
+      Updated at {{project.updatedAt}}
+      {{/if}}
+    </small>
     <div class="top">
       <div class="project-image">
-        <img src="{{project.imageUrl}}" style="width: 100%; max-height: 450px; object-fit: cover;" alt="">
+        <img src="{{project.image}}" style="width: 100%; max-height: 450px; object-fit: cover;" alt="">
       </div>
       <div class="project-attr">
         <h3 class="fs-4" style="margin: 0;">Duration</h3>
@@ -64,16 +70,16 @@
 
         <h3 class="fs-4" style="margin: 0;">Technologies</h3>
         <div style="margin-top: 10px;" class="project-technologies">
-          {{#if project.technologies.js}}
+          {{#if project.javascript}}
           <div><i class="fa-brands fa-square-js"></i> Javascript</div>
           {{/if}}
-          {{#if project.technologies.go}}
+          {{#if project.golang}}
           <div><i class="fa-brands fa-golang"></i> Golang</div>
           {{/if}}
-          {{#if project.technologies.php}}
+          {{#if project.php}}
           <div><i class="fa-brands fa-php"></i> PHP</div>
           {{/if}}
-          {{#if project.technologies.java}}
+          {{#if project.java}}
           <div><i class="fa-brands fa-java"></i> Java</div>
           {{/if}}
         </div>

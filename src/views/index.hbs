@@ -103,32 +103,38 @@
       {{#each projects}}
       <div class="col">
         <div class="card h-100 shadow">
-          <img src="{{this.imageUrl}}" class="card-img-top img-thumbnail" alt="Hiita"
+          <img src="{{this.image}}" class="card-img-top img-thumbnail" alt="Hiita"
             style="height: 280px; object-fit: cover;">
           <div class="card-body">
             <h5 class="card-title fw-bold"><a class="text-decoration-none link-dark"
-                href="/detail-project/{{this.id}}">{{this.projectName}}</a>
+                href="/detail-project/{{this.id}}">{{this.name}}</a>
             </h5>
             <small class="d-block mb-2 text-secondary">Duration: {{this.startDate}} - {{this.endDate}}
               ({{this.distance}})</small>
             <p class="card-text">{{this.description}}</p>
             <div class="d-flex">
-              {{#if this.technologies.js}}
+              {{#if this.javascript}}
               <i class="fa-brands fa-square-js me-2 fs-4"></i>
               {{/if}}
-              {{#if this.technologies.go}}
+              {{#if this.golang}}
               <i class="fa-brands fa-golang me-2 fs-4"></i>
               {{/if}}
-              {{#if this.technologies.php}}
+              {{#if this.php}}
               <i class="fa-brands fa-php me-2 fs-4"></i>
               {{/if}}
-              {{#if this.technologies.java}}
+              {{#if this.java}}
               <i class="fa-brands fa-java me-2 fs-4"></i>
               {{/if}}
             </div>
           </div>
           <div class="card-footer">
-            <small class="d-block text-secondary mb-2 text-center">{{this.createdAt}}</small>
+            <small class="d-block text-secondary mb-2 text-center">
+              {{#if this.neverUpdated}}
+              Created at {{this.createdAt}}
+              {{else}}
+              Updated at {{this.updatedAt}}
+              {{/if}}
+            </small>
             <div class="d-flex justify-content-between">
               <a class="btn btn-primary d-block w-100 mx-1 text-decoration-none text-white"
                 href="/edit-project/{{this.id}}">
