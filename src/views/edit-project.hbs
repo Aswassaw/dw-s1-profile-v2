@@ -51,7 +51,7 @@
       <div class="mb-3">
         <label for="projectName" class="form-label">Project Name</label>
         <input type="text" class="form-control" id="projectName" name="projectName" placeholder="Project Name"
-          value="{{project.projectName}}">
+          value="{{project.name}}">
       </div>
       <div class="mb-3 d-flex flex-column flex-sm-row justify-content-between gap-2">
         <div class="w-100 mb-2 mb-sm-0">
@@ -75,7 +75,7 @@
         <div class="row">
           <div class="col-12 col-sm-3 mb-1 mb-sm-0">
             <div class="form-check d-flex align-items-center gap-2">
-              {{#if project.technologies.js}}
+              {{#if project.javascript}}
               <input class="form-check-input checkbox-custom" type="checkbox" value="Javascript" id="javascript"
                 name="javascript" checked>
               {{else}}
@@ -89,7 +89,7 @@
           </div>
           <div class="col-12 col-sm-3 mb-1 mb-sm-0">
             <div class="form-check d-flex align-items-center gap-2">
-              {{#if project.technologies.go}}
+              {{#if project.golang}}
               <input class="form-check-input checkbox-custom" type="checkbox" value="Golang" id="golang" name="golang"
                 checked>
               {{else}}
@@ -102,7 +102,7 @@
           </div>
           <div class="col-12 col-sm-3 mb-1 mb-sm-0">
             <div class="form-check d-flex align-items-center gap-2">
-              {{#if project.technologies.php}}
+              {{#if project.php}}
               <input class="form-check-input checkbox-custom" type="checkbox" value="PHP" id="php" name="php" checked>
               {{else}}
               <input class="form-check-input checkbox-custom" type="checkbox" value="PHP" id="php" name="php">
@@ -114,7 +114,7 @@
           </div>
           <div class="col-12 col-sm-3 mb-1 mb-sm-0">
             <div class="form-check d-flex align-items-center gap-2">
-              {{#if project.technologies.java}}
+              {{#if project.java}}
               <input class="form-check-input checkbox-custom" type="checkbox" value="Java" id="java" name="java"
                 checked>
               {{else}}

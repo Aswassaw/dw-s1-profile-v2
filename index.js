@@ -87,76 +87,112 @@ app.get("/detail-project/:id", async (req, res) => {
 app.get("/add-project", (req, res) => {
   res.render("add-project");
 });
-app.post("/add-project", (req, res) => {
-  const newProject = {
-    id: `${new Date().getTime()}`,
-    projectName: req.body.projectName,
-    startDate: moment(req.body.startDate).format("L"),
-    endDate: moment(req.body.endDate).format("L"),
-    distance: dateDuration(req.body.startDate, req.body.endDate),
-    description: req.body.description,
-    technologies: {
-      js: req.body.javascript !== undefined,
-      go: req.body.golang !== undefined,
-      php: req.body.php !== undefined,
-      java: req.body.java !== undefined,
-    },
-    imageUrl: "https://mardizu.co.id/assets/images/client/default.png",
-    createdAt: moment(new Date()).format("LLLL"),
-  };
-  projects.push(newProject);
+app.post("/add-project", async (req, res) => {
+  try {
+    const query = `INSERT INTO projects (name, "startDate", "endDate", description, javascript, golang, php, java, image, "createdAt", "updatedAt") VALUES (:name, :startDate, :endDate, :description, :javascript, :golang, :php, :java, :image, :createdAt, :updatedAt);`;
 
-  res.redirect("/");
-});
-app.get("/edit-project/:id", (req, res) => {
-  const selectedProject = projects.filter(
-    (project) => project.id === req.params.id
-  );
+    await sequelize.query(query, {
+      replacements: {
+        name: req.body.projectName,
+        startDate: req.body.startDate,
+        endDate: req.body.endDate,
+        description: req.body.description,
+        javascript: req.body.javascript ? true : false,
+        golang: req.body.golang ? true : false,
+        php: req.body.php ? true : false,
+        java: req.body.java ? true : false,
+        image: "https://mardizu.co.id/assets/images/client/default.png",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      type: QueryTypes.INSERT,
+    });
 
-  if (selectedProject.length === 0) {
     res.redirect("/");
+  } catch (error) {
+    console.log(error);
+    res.send("500 Internal Server Error");
   }
-
-  res.render("edit-project", {
-    project: {
-      ...selectedProject[0],
-      startDate: moment(new Date(selectedProject[0].startDate)).format(
-        "YYYY-MM-DD"
-      ),
-      endDate: moment(new Date(selectedProject[0].endDate)).format(
-        "YYYY-MM-DD"
-      ),
-    },
-  });
 });
-app.post("/edit-project/:id", (req, res) => {
-  const newProject = {
-    id: req.params.id,
-    projectName: req.body.projectName,
-    startDate: moment(req.body.startDate).format("L"),
-    endDate: moment(req.body.endDate).format("L"),
-    distance: dateDuration(req.body.startDate, req.body.endDate),
-    description: req.body.description,
-    technologies: {
-      js: req.body.javascript !== undefined,
-      go: req.body.golang !== undefined,
-      php: req.body.php !== undefined,
-      java: req.body.java !== undefined,
-    },
-    imageUrl: "https://mardizu.co.id/assets/images/client/default.png",
-    createdAt: moment(new Date()).format("LLLL"),
-  };
-  // delete project
-  projects = projects.filter((project) => project.id !== req.params.id);
-  // add project
-  projects.push(newProject);
+app.get("/edit-project/:id", async (req, res) => {
+  try {
+    const query = `SELECT * FROM projects WHERE id=:id;`;
+    let projectDetail = await sequelize.query(query, {
+      replacements: {
+        id: req.params.id,
+      },
+      type: QueryTypes.SELECT,
+    });
 
-  res.redirect("/");
+    if (projectDetail.length === 0) {
+      res.redirect("/");
+    }
+
+    projectDetail = projectDetail.map((project) => ({
+      ...project,
+      startDate: moment(project.startDate).format("YYYY-MM-DD"),
+      endDate: moment(project.endDate).format("YYYY-MM-DD"),
+      createdAt: moment(project.createdAt).format("LLLL"),
+      updatedAt: moment(project.updatedAt).format("LLLL"),
+      distance: dateDuration(project.startDate, project.endDate),
+      neverUpdated:
+        moment(project.createdAt).format("L") ===
+        moment(project.updatedAt).format("L"),
+    }));
+
+    res.render("edit-project", {
+      project: projectDetail[0],
+    });
+  } catch (error) {
+    console.log(error);
+    res.send("500 Internal Server Error");
+  }
 });
-app.get("/delete-project/:id", (req, res) => {
-  projects = projects.filter((project) => project.id !== req.params.id);
+app.post("/edit-project/:id", async (req, res) => {
+  try {
+    const query = `UPDATE projects SET name=:name, "startDate"=:startDate, "endDate"=:endDate, description=:description, javascript=:javascript, golang=:golang, php=:php, java=:java, image=:image, "updatedAt"=:updatedAt WHERE id=:id;`;
 
-  res.redirect("/");
+    console.log(req.body);
+
+    await sequelize.query(query, {
+      replacements: {
+        id: req.params.id,
+        name: req.body.projectName,
+        startDate: req.body.startDate,
+        endDate: req.body.endDate,
+        description: req.body.description,
+        javascript: req.body.javascript ? true : false,
+        golang: req.body.golang ? true : false,
+        php: req.body.php ? true : false,
+        java: req.body.java ? true : false,
+        image: "https://mardizu.co.id/assets/images/client/default.png",
+        updatedAt: new Date(),
+      },
+      type: QueryTypes.UPDATE,
+    });
+
+    res.redirect("/");
+  } catch (error) {
+    console.log(error);
+    res.send("500 Internal Server Error");
+  }
+});
+app.get("/delete-project/:id", async (req, res) => {
+  try {
+    const query = `DELETE FROM projects WHERE id=:id;`;
+
+    await sequelize.query(query, {
+      replacements: {
+        id: req.params.id,
+      },
+      type: QueryTypes.DELETE,
+    });
+
+    res.redirect("/");
+  } catch (error) {
+    console.log(error);
+    res.send("500 Internal Server Error");
+  }
 });
 app.get("/testimonial", (req, res) => {
   res.render("testimonial");
