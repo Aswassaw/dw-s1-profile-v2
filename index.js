@@ -37,8 +37,8 @@ app.get("/", async (req, res) => {
     projectsData = projectsData.map((project) => {
       return {
         ...project,
-        startDate: moment(project.startDate).format("L"),
-        endDate: moment(project.endDate).format("L"),
+        startDate: moment(project.startDate).format("DD/MM/YYYY"),
+        endDate: moment(project.endDate).format("DD/MM/YYYY"),
         createdAt: moment(project.createdAt).format("LLLL"),
         updatedAt: moment(project.updatedAt).format("LLLL"),
         distance: dateDuration(project.startDate, project.endDate),
@@ -66,8 +66,8 @@ app.get("/detail-project/:id", async (req, res) => {
 
     projectDetail = projectDetail.map((project) => ({
       ...project,
-      startDate: moment(project.startDate).format("L"),
-      endDate: moment(project.endDate).format("L"),
+      startDate: moment(project.startDate).format("DD/MM/YYYY"),
+      endDate: moment(project.endDate).format("DD/MM/YYYY"),
       createdAt: moment(project.createdAt).format("LLLL"),
       updatedAt: moment(project.updatedAt).format("LLLL"),
       distance: dateDuration(project.startDate, project.endDate),
@@ -81,7 +81,7 @@ app.get("/detail-project/:id", async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.send("500 Internal Server Error");
+    res.send(`500 Internal Server Error - ${error.message}`);
   }
 });
 app.get("/add-project", (req, res) => {
@@ -145,7 +145,7 @@ app.get("/edit-project/:id", async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.send("500 Internal Server Error");
+    res.send(`500 Internal Server Error - ${error.message}`);
   }
 });
 app.post("/edit-project/:id", async (req, res) => {
@@ -174,7 +174,7 @@ app.post("/edit-project/:id", async (req, res) => {
     res.redirect("/");
   } catch (error) {
     console.log(error);
-    res.send("500 Internal Server Error");
+    res.send(`500 Internal Server Error - ${error.message}`);
   }
 });
 app.get("/delete-project/:id", async (req, res) => {
@@ -191,7 +191,7 @@ app.get("/delete-project/:id", async (req, res) => {
     res.redirect("/");
   } catch (error) {
     console.log(error);
-    res.send("500 Internal Server Error");
+    res.send(`500 Internal Server Error - ${error.message}`);
   }
 });
 app.get("/testimonial", (req, res) => {
