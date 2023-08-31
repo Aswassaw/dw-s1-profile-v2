@@ -255,21 +255,26 @@ app.get("/register", (req, res) => {
   });
 });
 app.post("/register", async (req, res) => {
-  const query = `INSERT INTO users (name, email, password, "createdAt", "updatedAt") VALUES (:name, :email, :password, :createdAt, :updatedAt);`;
+  try {
+    const query = `INSERT INTO users (name, email, password, "createdAt", "updatedAt") VALUES (:name, :email, :password, :createdAt, :updatedAt);`;
 
-  const passwordHashed = await bcrypt.hash(req.body.password, 10);
-  await sequelize.query(query, {
-    replacements: {
-      name: req.body.name,
-      email: req.body.email,
-      password: passwordHashed,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    type: QueryTypes.INSERT,
-  });
+    const passwordHashed = await bcrypt.hash(req.body.password, 10);
+    await sequelize.query(query, {
+      replacements: {
+        name: req.body.name,
+        email: req.body.email,
+        password: passwordHashed,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      type: QueryTypes.INSERT,
+    });
 
-  res.redirect("/login");
+    res.redirect("/login");
+  } catch (error) {
+    console.log(error);
+    res.send(`500 Internal Server Error - ${error.message}`);
+  }
 });
 app.get("/login", (req, res) => {
   if (req.session.isLoggedIn) {
@@ -286,40 +291,58 @@ app.get("/login", (req, res) => {
   });
 });
 app.post("/login", async (req, res) => {
-  const query = `SELECT * FROM users WHERE email=:email`;
+  try {
+    const query = `SELECT * FROM users WHERE email=:email`;
 
-  const userSelected = await sequelize.query(query, {
-    replacements: {
-      email: req.body.email,
-    },
-    type: QueryTypes.SELECT,
-  });
+    const userSelected = await sequelize.query(query, {
+      replacements: {
+        email: req.body.email,
+      },
+      type: QueryTypes.SELECT,
+    });
 
-  // jika email belum terdaftar
-  if (userSelected.length === 0) {
-    req.flash("danger", "Email or Password wrong");
-    res.redirect("/login");
-    return;
+    // jika email belum terdaftar
+    if (userSelected.length === 0) {
+      req.flash("danger", "Email or Password wrong");
+      res.redirect("/login");
+      return;
+    }
+
+    // cek password
+    const match = await bcrypt.compare(
+      req.body.password,
+      userSelected[0].password
+    );
+
+    // jika password salah
+    if (!match) {
+      req.flash("danger", "Email or Password wrong");
+      res.redirect("/login");
+      return;
+    }
+
+    req.session.idUser = userSelected[0].id;
+    req.session.name = userSelected[0].name;
+    req.session.isLoggedIn = true;
+    req.flash(
+      "success",
+      `Login success, now logged as ${userSelected[0].name}`
+    );
+    res.redirect("/");
+  } catch (error) {
+    console.log(error);
+    res.send(`500 Internal Server Error - ${error.message}`);
   }
+});
+app.get("/logout", (req, res) => {
+  try {
+    req.session.destroy();
 
-  // cek password
-  const match = await bcrypt.compare(
-    req.body.password,
-    userSelected[0].password
-  );
-
-  // jika password salah
-  if (!match) {
-    req.flash("danger", "Email or Password wrong");
-    res.redirect("/login");
-    return;
+    res.redirect("login");
+  } catch (error) {
+    console.log(error);
+    res.send(`500 Internal Server Error - ${error.message}`);
   }
-
-  req.session.idUser = userSelected[0].id;
-  req.session.name = userSelected[0].name;
-  req.session.isLoggedIn = true;
-  req.flash("success", `Login success, now logged as ${userSelected[0].name}`);
-  res.redirect("/");
 });
 // other
 app.get("/testimonial", (req, res) => {
