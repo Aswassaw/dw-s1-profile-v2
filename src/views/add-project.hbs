@@ -35,8 +35,16 @@
           <li class="nav-item">
             <a class="nav-link" href="/testimonial">Testimonial</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Logout</a>
+          </li>
         </ul>
-        <ul class="navbar-nav">
+        <ul class="navbar-nav align-items-center">
+          {{#if auth.name}}
+          <li class="nav-item me-1">
+            <p class="nav-link d-inline">Halo, {{auth.name}}</p>
+          </li>
+          {{/if}}
           <li class="nav-item">
             <a class="nav-link bg-dark text-white rounded-2 p-3" href="/contact-me">Contact Me</a>
           </li>
@@ -64,7 +72,8 @@
       </div>
       <div class="mb-3">
         <label for="description" class="form-label">Description</label>
-        <textarea class="form-control" id="description" rows="6" name="description" placeholder="Project Description"></textarea>
+        <textarea class="form-control" id="description" rows="6" name="description"
+          placeholder="Project Description"></textarea>
       </div>
       <div class="mb-3">
         <label class="label mb-1" for="technologies">Technologies</label>

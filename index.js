@@ -109,6 +109,11 @@ app.get("/detail-project/:id", async (req, res) => {
 
     res.render("detail-project", {
       project: projectDetail[0],
+      auth: {
+        isLoggedIn: req.session.isLoggedIn,
+        idUser: req.session.id,
+        name: req.session.name,
+      },
     });
   } catch (error) {
     console.log(error);
@@ -121,7 +126,13 @@ app.get("/add-project", (req, res) => {
     return;
   }
 
-  res.render("add-project");
+  res.render("add-project", {
+    auth: {
+      isLoggedIn: req.session.isLoggedIn,
+      idUser: req.session.id,
+      name: req.session.name,
+    },
+  });
 });
 app.post("/add-project", async (req, res) => {
   try {
@@ -184,6 +195,11 @@ app.get("/edit-project/:id", async (req, res) => {
 
     res.render("edit-project", {
       project: projectDetail[0],
+      auth: {
+        isLoggedIn: req.session.isLoggedIn,
+        idUser: req.session.id,
+        name: req.session.name,
+      },
     });
   } catch (error) {
     console.log(error);
