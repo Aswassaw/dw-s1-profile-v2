@@ -1,6 +1,9 @@
 const express = require("express");
 const moment = require("moment/moment");
 const path = require("path");
+const bcrypt = require("bcrypt");
+const session = require("express-session");
+const flash = require("express-flash");
 const dateDuration = require("./src/utils/dateDuration");
 
 // sequelize init
@@ -15,6 +18,21 @@ app.set("views", path.join(__dirname, "src/views"));
 app.use(express.static(path.join(__dirname, "src/assets")));
 app.use(express.urlencoded({ extended: false }));
 
+app.use(flash());
+app.use(
+  session({
+    cookie: {
+      httpOnly: true,
+      secure: false,
+      maxAge: 1000 * 60 * 60 * 2,
+    },
+    store: new session.MemoryStore(),
+    saveUninitialized: true,
+    resave: false,
+    secret: "GpGO*CG*o3CV*Owc8clIgi8COL",
+  })
+);
+
 // projects data
 let projects = require("./src/data/projects.json");
 projects = projects.map((project) => {
@@ -27,6 +45,7 @@ projects = projects.map((project) => {
   };
 });
 
+// project
 app.get("/", async (req, res) => {
   try {
     const query = `SELECT * FROM projects;`;
@@ -45,10 +64,18 @@ app.get("/", async (req, res) => {
         neverUpdated:
           moment(project.createdAt).format("L") ===
           moment(project.updatedAt).format("L"),
+        isLoggedIn: req.session.isLoggedIn,
       };
     });
 
-    res.render("index", { projects: projectsData });
+    res.render("index", {
+      projects: projectsData,
+      auth: {
+        isLoggedIn: req.session.isLoggedIn,
+        id: req.session.id,
+        name: req.session.name,
+      },
+    });
   } catch (error) {
     console.log(error);
     res.send("500 Internal Server Error");
@@ -56,6 +83,11 @@ app.get("/", async (req, res) => {
 });
 app.get("/detail-project/:id", async (req, res) => {
   try {
+    if (!req.session.isLoggedIn) {
+      res.redirect("/login");
+      return;
+    }
+
     const query = `SELECT * FROM projects WHERE id=:id;`;
     let projectDetail = await sequelize.query(query, {
       replacements: {
@@ -85,15 +117,21 @@ app.get("/detail-project/:id", async (req, res) => {
   }
 });
 app.get("/add-project", (req, res) => {
+  if (!req.session.isLoggedIn) {
+    res.redirect("/login");
+    return;
+  }
+
   res.render("add-project");
 });
 app.post("/add-project", async (req, res) => {
   try {
-    const query = `INSERT INTO projects (name, "startDate", "endDate", description, javascript, golang, php, java, image, "createdAt", "updatedAt") VALUES (:name, :startDate, :endDate, :description, :javascript, :golang, :php, :java, :image, :createdAt, :updatedAt);`;
+    const query = `INSERT INTO projects ("projectName", "userId", "startDate", "endDate", description, javascript, golang, php, java, image, "createdAt", "updatedAt") VALUES (:projectName, :userId, :startDate, :endDate, :description, :javascript, :golang, :php, :java, :image, :createdAt, :updatedAt);`;
 
     await sequelize.query(query, {
       replacements: {
-        name: req.body.projectName,
+        projectName: req.body.projectName,
+        userId: req.session.id,
         startDate: req.body.startDate,
         endDate: req.body.endDate,
         description: req.body.description,
@@ -116,6 +154,11 @@ app.post("/add-project", async (req, res) => {
 });
 app.get("/edit-project/:id", async (req, res) => {
   try {
+    if (!req.session.isLoggedIn) {
+      res.redirect("/login");
+      return;
+    }
+
     const query = `SELECT * FROM projects WHERE id=:id;`;
     let projectDetail = await sequelize.query(query, {
       replacements: {
@@ -150,14 +193,11 @@ app.get("/edit-project/:id", async (req, res) => {
 });
 app.post("/edit-project/:id", async (req, res) => {
   try {
-    const query = `UPDATE projects SET name=:name, "startDate"=:startDate, "endDate"=:endDate, description=:description, javascript=:javascript, golang=:golang, php=:php, java=:java, image=:image, "updatedAt"=:updatedAt WHERE id=:id;`;
-
-    console.log(req.body);
+    const query = `UPDATE projects SET projectName=:projectName, "startDate"=:startDate, "endDate"=:endDate, description=:description, javascript=:javascript, golang=:golang, php=:php, java=:java, image=:image, "updatedAt"=:updatedAt WHERE id=:id;`;
 
     await sequelize.query(query, {
       replacements: {
-        id: req.params.id,
-        name: req.body.projectName,
+        projectName: req.body.projectName,
         startDate: req.body.startDate,
         endDate: req.body.endDate,
         description: req.body.description,
@@ -179,6 +219,11 @@ app.post("/edit-project/:id", async (req, res) => {
 });
 app.get("/delete-project/:id", async (req, res) => {
   try {
+    if (!req.session.isLoggedIn) {
+      res.redirect("/login");
+      return;
+    }
+
     const query = `DELETE FROM projects WHERE id=:id;`;
 
     await sequelize.query(query, {
@@ -194,11 +239,106 @@ app.get("/delete-project/:id", async (req, res) => {
     res.send(`500 Internal Server Error - ${error.message}`);
   }
 });
+// auth
+app.get("/register", (req, res) => {
+  if (req.session.isLoggedIn) {
+    res.redirect("/");
+    return;
+  }
+
+  res.render("register", {
+    auth: {
+      isLoggedIn: req.session.isLoggedIn,
+      id: req.session.id,
+      name: req.session.name,
+    },
+  });
+});
+app.post("/register", async (req, res) => {
+  const query = `INSERT INTO users (name, email, password, "createdAt", "updatedAt") VALUES (:name, :email, :password, :createdAt, :updatedAt);`;
+
+  const passwordHashed = await bcrypt.hash(req.body.password, 10);
+  await sequelize.query(query, {
+    replacements: {
+      name: req.body.name,
+      email: req.body.email,
+      password: passwordHashed,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    type: QueryTypes.INSERT,
+  });
+
+  res.redirect("/login");
+});
+app.get("/login", (req, res) => {
+  if (req.session.isLoggedIn) {
+    res.redirect("/");
+    return;
+  }
+
+  res.render("login", {
+    auth: {
+      isLoggedIn: req.session.isLoggedIn,
+      id: req.session.id,
+      name: req.session.name,
+    },
+  });
+});
+app.post("/login", async (req, res) => {
+  const query = `SELECT * FROM users WHERE email=:email`;
+
+  const userSelected = await sequelize.query(query, {
+    replacements: {
+      email: req.body.email,
+    },
+    type: QueryTypes.SELECT,
+  });
+
+  // jika email belum terdaftar
+  if (userSelected.length === 0) {
+    req.flash("danger", "Email or Password wrong");
+    res.redirect("/login");
+    return;
+  }
+
+  // cek password
+  const match = await bcrypt.compare(
+    req.body.password,
+    userSelected[0].password
+  );
+
+  // jika password salah
+  if (!match) {
+    req.flash("danger", "Email or Password wrong");
+    res.redirect("/login");
+    return;
+  }
+
+  req.session.id = userSelected[0].id;
+  req.session.name = userSelected[0].name;
+  req.session.isLoggedIn = true;
+  req.flash("success", `Login success, now logged as ${userSelected[0].name}`);
+  res.redirect("/");
+});
+// other
 app.get("/testimonial", (req, res) => {
-  res.render("testimonial");
+  res.render("testimonial", {
+    auth: {
+      isLoggedIn: req.session.isLoggedIn,
+      id: req.session.id,
+      name: req.session.name,
+    },
+  });
 });
 app.get("/contact-me", (req, res) => {
-  res.render("contact");
+  res.render("contact", {
+    auth: {
+      isLoggedIn: req.session.isLoggedIn,
+      id: req.session.id,
+      name: req.session.name,
+    },
+  });
 });
 
 const PORT = 5000;

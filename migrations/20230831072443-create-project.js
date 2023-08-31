@@ -1,4 +1,5 @@
 "use strict";
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -9,9 +10,19 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      name: {
+      userId: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
+        references: {
+          model: "users",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      projectName: {
+        allowNull: false,
+        type: Sequelize.STRING(100),
       },
       startDate: {
         allowNull: false,
@@ -26,19 +37,23 @@ module.exports = {
         type: Sequelize.TEXT,
       },
       javascript: {
+        allowNull: false,
         type: Sequelize.BOOLEAN,
       },
       golang: {
+        allowNull: false,
         type: Sequelize.BOOLEAN,
       },
       php: {
+        allowNull: false,
         type: Sequelize.BOOLEAN,
       },
       java: {
+        allowNull: false,
         type: Sequelize.BOOLEAN,
       },
       image: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(255),
       },
       createdAt: {
         allowNull: false,
@@ -50,6 +65,7 @@ module.exports = {
       },
     });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("projects");
   },
