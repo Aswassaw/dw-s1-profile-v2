@@ -272,6 +272,22 @@ app.get("/register", (req, res) => {
 });
 app.post("/register", async (req, res) => {
   try {
+    // cek apakah user dengan email sudah ada
+    const queryCheck = `SELECT * FROM users WHERE email=:email`;
+    const userSelected = await sequelize.query(queryCheck, {
+      replacements: {
+        email: req.body.email,
+      },
+      type: QueryTypes.SELECT,
+    });
+
+    // jika email sudah terdaftar
+    if (userSelected.length) {
+      req.flash("danger", "Email already registered");
+      res.redirect("/register");
+      return;
+    }
+
     const query = `INSERT INTO users (name, email, password, "createdAt", "updatedAt") VALUES (:name, :email, :password, :createdAt, :updatedAt);`;
 
     const passwordHashed = await bcrypt.hash(req.body.password, 10);
