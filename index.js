@@ -62,8 +62,7 @@ app.get("/", async (req, res) => {
         updatedAt: moment(project.updatedAt).format("LLLL"),
         distance: dateDuration(project.startDate, project.endDate),
         neverUpdated:
-          moment(project.createdAt).format("L") ===
-          moment(project.updatedAt).format("L"),
+          moment(project.createdAt).unix() === moment(project.updatedAt).unix(),
         isLoggedIn: req.session.isLoggedIn,
       };
     });
@@ -72,7 +71,7 @@ app.get("/", async (req, res) => {
       projects: projectsData,
       auth: {
         isLoggedIn: req.session.isLoggedIn,
-        id: req.session.id,
+        idUser: req.session.id,
         name: req.session.name,
       },
     });
@@ -131,7 +130,7 @@ app.post("/add-project", async (req, res) => {
     await sequelize.query(query, {
       replacements: {
         projectName: req.body.projectName,
-        userId: req.session.id,
+        userId: req.session.idUser,
         startDate: req.body.startDate,
         endDate: req.body.endDate,
         description: req.body.description,
@@ -193,10 +192,11 @@ app.get("/edit-project/:id", async (req, res) => {
 });
 app.post("/edit-project/:id", async (req, res) => {
   try {
-    const query = `UPDATE projects SET projectName=:projectName, "startDate"=:startDate, "endDate"=:endDate, description=:description, javascript=:javascript, golang=:golang, php=:php, java=:java, image=:image, "updatedAt"=:updatedAt WHERE id=:id;`;
+    const query = `UPDATE projects SET "projectName"=:projectName, "startDate"=:startDate, "endDate"=:endDate, description=:description, javascript=:javascript, golang=:golang, php=:php, java=:java, image=:image, "updatedAt"=:updatedAt WHERE id=:id;`;
 
     await sequelize.query(query, {
       replacements: {
+        id: req.params.id,
         projectName: req.body.projectName,
         startDate: req.body.startDate,
         endDate: req.body.endDate,
@@ -249,7 +249,7 @@ app.get("/register", (req, res) => {
   res.render("register", {
     auth: {
       isLoggedIn: req.session.isLoggedIn,
-      id: req.session.id,
+      idUser: req.session.id,
       name: req.session.name,
     },
   });
@@ -280,7 +280,7 @@ app.get("/login", (req, res) => {
   res.render("login", {
     auth: {
       isLoggedIn: req.session.isLoggedIn,
-      id: req.session.id,
+      idUser: req.session.id,
       name: req.session.name,
     },
   });
@@ -315,7 +315,7 @@ app.post("/login", async (req, res) => {
     return;
   }
 
-  req.session.id = userSelected[0].id;
+  req.session.idUser = userSelected[0].id;
   req.session.name = userSelected[0].name;
   req.session.isLoggedIn = true;
   req.flash("success", `Login success, now logged as ${userSelected[0].name}`);
@@ -326,7 +326,7 @@ app.get("/testimonial", (req, res) => {
   res.render("testimonial", {
     auth: {
       isLoggedIn: req.session.isLoggedIn,
-      id: req.session.id,
+      idUser: req.session.id,
       name: req.session.name,
     },
   });
@@ -335,7 +335,7 @@ app.get("/contact-me", (req, res) => {
   res.render("contact", {
     auth: {
       isLoggedIn: req.session.isLoggedIn,
-      id: req.session.id,
+      idUser: req.session.id,
       name: req.session.name,
     },
   });
