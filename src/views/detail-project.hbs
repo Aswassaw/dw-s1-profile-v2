@@ -55,9 +55,12 @@
 
   <div class="project-detail">
     {{#if project.id}}
-    <h1 class="fs-2 fw-bold mb-1" style="text-align: center; margin-top: 0; margin-bottom: 40px;">
+    <h1 class="fs-2 fw-bold mb-2" style="text-align: center; margin-top: 0;">
       {{project.projectName}}
     </h1>
+    <p class="d-block text-center mb-0">
+      Author: {{project.author}}
+    </p>
     <small class="d-block text-secondary mb-4 text-center">
       {{#if project.neverUpdated}}
       Created at {{project.createdAt}}

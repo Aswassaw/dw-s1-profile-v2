@@ -48,7 +48,7 @@ projects = projects.map((project) => {
 // project
 app.get("/", async (req, res) => {
   try {
-    const query = `SELECT * FROM projects;`;
+    const query = `SELECT p.id, "projectName", "startDate", "endDate", description, javascript, golang, php, java, image, p."createdAt", p."updatedAt", users.name AS author FROM projects p JOIN users ON p."userId" = users.id ORDER BY p.id DESC;`;
     let projectsData = await sequelize.query(query, {
       type: QueryTypes.SELECT,
     });
@@ -87,7 +87,7 @@ app.get("/detail-project/:id", async (req, res) => {
       return;
     }
 
-    const query = `SELECT * FROM projects WHERE id=:id;`;
+    const query = `SELECT p.id, "projectName", "startDate", "endDate", description, javascript, golang, php, java, image, p."createdAt", p."updatedAt", users.name AS author FROM projects p JOIN users ON p."userId" = users.id WHERE p.id=:id;`;
     let projectDetail = await sequelize.query(query, {
       replacements: {
         id: req.params.id,
@@ -103,8 +103,7 @@ app.get("/detail-project/:id", async (req, res) => {
       updatedAt: moment(project.updatedAt).format("LLLL"),
       distance: dateDuration(project.startDate, project.endDate),
       neverUpdated:
-        moment(project.createdAt).format("L") ===
-        moment(project.updatedAt).format("L"),
+        moment(project.createdAt).unix() === moment(project.updatedAt).unix(),
     }));
 
     res.render("detail-project", {
@@ -249,6 +248,7 @@ app.get("/delete-project/:id", async (req, res) => {
       type: QueryTypes.DELETE,
     });
 
+    req.flash("success", "Project deleted successfully");
     res.redirect("/");
   } catch (error) {
     console.log(error);
