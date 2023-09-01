@@ -8,6 +8,8 @@ const dateDuration = require("./src/utils/dateDuration");
 const deleteFile = require("./src/utils/deleteFile");
 const uploadMiddleware = require("./src/middlewares/upload");
 
+const BASE_URL = "http://localhost:5000";
+
 // sequelize init
 const config = require("./config/config.json");
 const { Sequelize, QueryTypes } = require("sequelize");
@@ -68,6 +70,9 @@ app.get("/", async (req, res) => {
           moment(project.createdAt).unix() === moment(project.updatedAt).unix(),
         isLoggedIn: req.session.isLoggedIn,
         access: req.session.idUser === project.idUser,
+        image: project.image.includes("https")
+          ? project.image
+          : `${BASE_URL}/${project.image}`,
       };
     });
 
@@ -108,6 +113,9 @@ app.get("/detail-project/:id", async (req, res) => {
       distance: dateDuration(project.startDate, project.endDate),
       neverUpdated:
         moment(project.createdAt).unix() === moment(project.updatedAt).unix(),
+      image: project.image.includes("https")
+        ? project.image
+        : `${BASE_URL}/${project.image}`,
     }));
 
     res.render("detail-project", {
@@ -178,7 +186,7 @@ app.get("/edit-project/:id", async (req, res) => {
       return;
     }
 
-    const query = `SELECT * FROM projects WHERE id=:id;`;
+    const query = `SELECT p.id, "projectName", "startDate", "endDate", description, javascript, golang, php, java, image, p."createdAt", p."updatedAt", users.name AS author, users.id AS "idUser" FROM projects p JOIN users ON p."userId" = users.id WHERE p.id=:id;`;
     let projectDetail = await sequelize.query(query, {
       replacements: {
         id: req.params.id,
@@ -187,7 +195,18 @@ app.get("/edit-project/:id", async (req, res) => {
     });
 
     if (projectDetail.length === 0) {
+      req.flash("danger", "Project Not Found!");
       res.redirect("/");
+      return;
+    }
+
+    if (projectDetail[0].idUser !== req.session.idUser) {
+      req.flash(
+        "danger",
+        "Anda tidak memiliki akses terhadap Project tersebut!"
+      );
+      res.redirect("/");
+      return;
     }
 
     projectDetail = projectDetail.map((project) => ({
@@ -235,7 +254,7 @@ app.post(
           java: req.body.java ? true : false,
           image:
             req.file?.filename ||
-            req.previousProjectImage ||
+            req.body.previousProjectImage ||
             "https://mardizu.co.id/assets/images/client/default.png",
           updatedAt: new Date(),
         },
@@ -244,7 +263,7 @@ app.post(
 
       // menghapus file jika ada req image baru
       if (req.file?.filename) {
-        deleteFile("./src/uploads/" + req.previousProjectImage);
+        deleteFile("src/uploads/" + req.body.previousProjectImage);
       }
 
       res.redirect("/");
@@ -261,14 +280,39 @@ app.get("/delete-project/:id", async (req, res) => {
       return;
     }
 
-    const query = `DELETE FROM projects WHERE id=:id;`;
+    const queryCheck = `SELECT  p.image, users.id AS "idUser" FROM projects p JOIN users ON p."userId" = users.id WHERE p.id=:id;`;
+    let projectDetail = await sequelize.query(queryCheck, {
+      replacements: {
+        id: req.params.id,
+      },
+      type: QueryTypes.SELECT,
+    });
 
+    if (projectDetail.length === 0) {
+      req.flash("danger", "Project Not Found!");
+      res.redirect("/");
+      return;
+    }
+
+    if (projectDetail[0].idUser !== req.session.idUser) {
+      req.flash(
+        "danger",
+        "Anda tidak memiliki akses terhadap Project tersebut!"
+      );
+      res.redirect("/");
+      return;
+    }
+
+    const query = `DELETE FROM projects WHERE id=:id;`;
     await sequelize.query(query, {
       replacements: {
         id: req.params.id,
       },
       type: QueryTypes.DELETE,
     });
+
+    // menghapus file jika ada req image baru
+    deleteFile("src/uploads/" + projectDetail[0].image);
 
     req.flash("success", "Project deleted successfully");
     res.redirect("/");
