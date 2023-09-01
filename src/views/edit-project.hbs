@@ -55,7 +55,7 @@
 
   <section class="container my-4 bg-white p-4 p-sm-5 shadow rounded-2" style="max-width: 600px;">
     <h1 class="text-center mb-4">EDIT PROJECT</h1>
-    <form id="contactForm" method="post" action="/edit-project/{{project.id}}">
+    <form id="contactForm" method="post" action="/edit-project/{{project.id}}" enctype="multipart/form-data">
       <div class="mb-3">
         <label for="projectName" class="form-label">Project Name</label>
         <input type="text" class="form-control" id="projectName" name="projectName" placeholder="Project Name"
@@ -139,6 +139,7 @@
         <label for="projectImage" class="form-label">Project Image</label>
         <input type="file" class="form-control" id="projectImage" name="projectImage" placeholder="Project Image">
       </div>
+      <input class="d-none" type="text" name="previousProjectImage" value="{{project.image}}">
       <div class="d-flex justify-content-end">
         <button type="submit" class="btn btn-primary">Submit</button>
       </div>

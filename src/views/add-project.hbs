@@ -55,25 +55,25 @@
 
   <section class="container my-4 bg-white p-4 p-sm-5 shadow rounded-2" style="max-width: 600px;">
     <h1 class="text-center mb-4">ADD PROJECT</h1>
-    <form id="contactForm" method="post" action="/add-project">
+    <form id="contactForm" method="post" action="/add-project" enctype="multipart/form-data">
       <div class="mb-3">
         <label for="projectName" class="form-label">Project Name</label>
-        <input type="text" class="form-control" id="projectName" name="projectName" placeholder="Project Name">
+        <input type="text" class="form-control" id="projectName" name="projectName" placeholder="Project Name" required>
       </div>
       <div class="mb-3 d-flex flex-column flex-sm-row justify-content-between gap-2">
         <div class="w-100 mb-2 mb-sm-0">
           <label for="startDate" class="form-label">Start Date</label>
-          <input type="date" class="form-control" id="startDate" name="startDate" placeholder="Start Date">
+          <input type="date" class="form-control" id="startDate" name="startDate" placeholder="Start Date" required>
         </div>
         <div class="w-100">
           <label for="endDate" class="form-label">End Date</label>
-          <input type="date" class="form-control" id="endDate" name="endDate" placeholder="End Date">
+          <input type="date" class="form-control" id="endDate" name="endDate" placeholder="End Date" required>
         </div>
       </div>
       <div class="mb-3">
         <label for="description" class="form-label">Description</label>
         <textarea class="form-control" id="description" rows="6" name="description"
-          placeholder="Project Description"></textarea>
+          placeholder="Project Description" required></textarea>
       </div>
       <div class="mb-3">
         <label class="label mb-1" for="technologies">Technologies</label>

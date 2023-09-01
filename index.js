@@ -5,6 +5,8 @@ const bcrypt = require("bcrypt");
 const session = require("express-session");
 const flash = require("express-flash");
 const dateDuration = require("./src/utils/dateDuration");
+const deleteFile = require("./src/utils/deleteFile");
+const uploadMiddleware = require("./src/middlewares/upload");
 
 // sequelize init
 const config = require("./config/config.json");
@@ -16,6 +18,7 @@ app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "src/views"));
 
 app.use(express.static(path.join(__dirname, "src/assets")));
+app.use(express.static(path.join(__dirname, "src/uploads")));
 app.use(express.urlencoded({ extended: false }));
 
 app.use(flash());
@@ -48,7 +51,7 @@ projects = projects.map((project) => {
 // project
 app.get("/", async (req, res) => {
   try {
-    const query = `SELECT p.id, "projectName", "startDate", "endDate", description, javascript, golang, php, java, image, p."createdAt", p."updatedAt", users.name AS author FROM projects p JOIN users ON p."userId" = users.id ORDER BY p.id DESC;`;
+    const query = `SELECT p.id, "projectName", "startDate", "endDate", description, javascript, golang, php, java, image, p."createdAt", p."updatedAt", users.name AS author, users.id AS "idUser" FROM projects p JOIN users ON p."userId" = users.id ORDER BY p.id DESC;`;
     let projectsData = await sequelize.query(query, {
       type: QueryTypes.SELECT,
     });
@@ -64,6 +67,7 @@ app.get("/", async (req, res) => {
         neverUpdated:
           moment(project.createdAt).unix() === moment(project.updatedAt).unix(),
         isLoggedIn: req.session.isLoggedIn,
+        access: req.session.idUser === project.idUser,
       };
     });
 
@@ -133,34 +137,40 @@ app.get("/add-project", (req, res) => {
     },
   });
 });
-app.post("/add-project", async (req, res) => {
-  try {
-    const query = `INSERT INTO projects ("projectName", "userId", "startDate", "endDate", description, javascript, golang, php, java, image, "createdAt", "updatedAt") VALUES (:projectName, :userId, :startDate, :endDate, :description, :javascript, :golang, :php, :java, :image, :createdAt, :updatedAt);`;
+app.post(
+  "/add-project",
+  uploadMiddleware.single("projectImage"),
+  async (req, res) => {
+    try {
+      const query = `INSERT INTO projects ("projectName", "userId", "startDate", "endDate", description, javascript, golang, php, java, image, "createdAt", "updatedAt") VALUES (:projectName, :userId, :startDate, :endDate, :description, :javascript, :golang, :php, :java, :image, :createdAt, :updatedAt);`;
 
-    await sequelize.query(query, {
-      replacements: {
-        projectName: req.body.projectName,
-        userId: req.session.idUser,
-        startDate: req.body.startDate,
-        endDate: req.body.endDate,
-        description: req.body.description,
-        javascript: req.body.javascript ? true : false,
-        golang: req.body.golang ? true : false,
-        php: req.body.php ? true : false,
-        java: req.body.java ? true : false,
-        image: "https://mardizu.co.id/assets/images/client/default.png",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      type: QueryTypes.INSERT,
-    });
+      await sequelize.query(query, {
+        replacements: {
+          projectName: req.body.projectName,
+          userId: req.session.idUser,
+          startDate: req.body.startDate,
+          endDate: req.body.endDate,
+          description: req.body.description,
+          javascript: req.body.javascript ? true : false,
+          golang: req.body.golang ? true : false,
+          php: req.body.php ? true : false,
+          java: req.body.java ? true : false,
+          image:
+            req.file?.filename ||
+            "https://mardizu.co.id/assets/images/client/default.png",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        type: QueryTypes.INSERT,
+      });
 
-    res.redirect("/");
-  } catch (error) {
-    console.log(error);
-    res.send("500 Internal Server Error");
+      res.redirect("/");
+    } catch (error) {
+      console.log(error);
+      res.send("500 Internal Server Error");
+    }
   }
-});
+);
 app.get("/edit-project/:id", async (req, res) => {
   try {
     if (!req.session.isLoggedIn) {
@@ -205,33 +215,45 @@ app.get("/edit-project/:id", async (req, res) => {
     res.send(`500 Internal Server Error - ${error.message}`);
   }
 });
-app.post("/edit-project/:id", async (req, res) => {
-  try {
-    const query = `UPDATE projects SET "projectName"=:projectName, "startDate"=:startDate, "endDate"=:endDate, description=:description, javascript=:javascript, golang=:golang, php=:php, java=:java, image=:image, "updatedAt"=:updatedAt WHERE id=:id;`;
+app.post(
+  "/edit-project/:id",
+  uploadMiddleware.single("projectImage"),
+  async (req, res) => {
+    try {
+      const query = `UPDATE projects SET "projectName"=:projectName, "startDate"=:startDate, "endDate"=:endDate, description=:description, javascript=:javascript, golang=:golang, php=:php, java=:java, image=:image, "updatedAt"=:updatedAt WHERE id=:id;`;
 
-    await sequelize.query(query, {
-      replacements: {
-        id: req.params.id,
-        projectName: req.body.projectName,
-        startDate: req.body.startDate,
-        endDate: req.body.endDate,
-        description: req.body.description,
-        javascript: req.body.javascript ? true : false,
-        golang: req.body.golang ? true : false,
-        php: req.body.php ? true : false,
-        java: req.body.java ? true : false,
-        image: "https://mardizu.co.id/assets/images/client/default.png",
-        updatedAt: new Date(),
-      },
-      type: QueryTypes.UPDATE,
-    });
+      await sequelize.query(query, {
+        replacements: {
+          id: req.params.id,
+          projectName: req.body.projectName,
+          startDate: req.body.startDate,
+          endDate: req.body.endDate,
+          description: req.body.description,
+          javascript: req.body.javascript ? true : false,
+          golang: req.body.golang ? true : false,
+          php: req.body.php ? true : false,
+          java: req.body.java ? true : false,
+          image:
+            req.file?.filename ||
+            req.previousProjectImage ||
+            "https://mardizu.co.id/assets/images/client/default.png",
+          updatedAt: new Date(),
+        },
+        type: QueryTypes.UPDATE,
+      });
 
-    res.redirect("/");
-  } catch (error) {
-    console.log(error);
-    res.send(`500 Internal Server Error - ${error.message}`);
+      // menghapus file jika ada req image baru
+      if (req.file?.filename) {
+        deleteFile("./src/uploads/" + req.previousProjectImage);
+      }
+
+      res.redirect("/");
+    } catch (error) {
+      console.log(error);
+      res.send(`500 Internal Server Error - ${error.message}`);
+    }
   }
-});
+);
 app.get("/delete-project/:id", async (req, res) => {
   try {
     if (!req.session.isLoggedIn) {

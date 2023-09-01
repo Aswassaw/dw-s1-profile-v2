@@ -170,6 +170,7 @@
             </small>
             {{#if this.isLoggedIn}}
             <div class="d-flex justify-content-between mb-2">
+              {{#if this.access}}
               <a class="btn btn-primary d-block w-100 mx-1 text-decoration-none text-white"
                 href="/edit-project/{{this.id}}">
                 Edit
@@ -178,6 +179,16 @@
                 href="/delete-project/{{this.id}}">
                 Delete
               </a>
+              {{else}}
+              <a class="btn btn-primary d-block w-100 mx-1 text-decoration-none text-white disabled"
+                href="/edit-project/{{this.id}}">
+                Edit
+              </a>
+              <a class="btn btn-danger d-block w-100 mx-1 text-decoration-none text-white disabled"
+                href="/delete-project/{{this.id}}">
+                Delete
+              </a>
+              {{/if}}
             </div>
             {{/if}}
           </div>
