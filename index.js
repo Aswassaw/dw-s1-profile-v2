@@ -53,10 +53,24 @@ projects = projects.map((project) => {
 // project
 app.get("/", async (req, res) => {
   try {
-    const query = `SELECT p.id, "projectName", "startDate", "endDate", description, javascript, golang, php, java, image, p."createdAt", p."updatedAt", users.name AS author, users.id AS "idUser" FROM projects p JOIN users ON p."userId" = users.id ORDER BY p.id DESC;`;
-    let projectsData = await sequelize.query(query, {
-      type: QueryTypes.SELECT,
-    });
+    let query = "";
+    let projectsData = "";
+    if (req.session.idUser) {
+      query = `SELECT p.id, "projectName", "startDate", "endDate", description, javascript, golang, php, java, image, p."createdAt", p."updatedAt", users.name AS author, users.id AS "idUser" FROM projects p JOIN users ON p."userId" = users.id WHERE p."userId" = :idUser ORDER BY p.id DESC;`;
+
+      projectsData = await sequelize.query(query, {
+        type: QueryTypes.SELECT,
+        replacements: {
+          idUser: req.session.idUser,
+        },
+      });
+    } else {
+      query = `SELECT p.id, "projectName", "startDate", "endDate", description, javascript, golang, php, java, image, p."createdAt", p."updatedAt", users.name AS author, users.id AS "idUser" FROM projects p JOIN users ON p."userId" = users.id ORDER BY p.id DESC;`;
+
+      projectsData = await sequelize.query(query, {
+        type: QueryTypes.SELECT,
+      });
+    }
 
     projectsData = projectsData.map((project) => {
       return {
